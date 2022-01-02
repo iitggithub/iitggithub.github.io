@@ -4,6 +4,10 @@ The random IT blog is a random IT blog written by a random IT guy that's mostly 
 
 ## Topics
 
+Published: Wednesday, 27 October 2021:
+
 * [How to fix chmod execute permissions](articles/2021-10-how-to-fix-chmod-execute-permissions)
 * [Enabling TCP Keepalive Functionality For Legacy Linux Applications](articles/2021-10-enabling-tcp-keepalive-functionality)
 * [udev: renamed network interface eth0 to eth1](articles/2021-10-udev-renamed-network-interface-eth0-to)
+
+
