@@ -224,4 +224,57 @@ Below is a detailed breakdown of each of the tests.
 
 ### 4K Random 100% Read/Write Test [Throughput]
 
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 51680 | 6545 |
+| ZFS Primary Cache: all | 43770 | 56024 |
+| ZFS Primary Cache: metadata | 3386 | 502 |
+| ZFS Primary Cache: none | 1552 | 498 |
+
+![](../images/4k_random_100_pct_read_write_throughput.PNG)
+
+### 4K Random 100% Read/Write Test [Average Latency]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 4 | 39 |
+| ZFS Primary Cache: all | 5 | 4 |
+| ZFS Primary Cache: metadata | 76 | 509 |
+| ZFS Primary Cache: none | 165 | 509 |
+
+![](../images/4k_random_100_pct_read_write_avg_latency.PNG)
+
+### 4K Random 100% Read/Write Test [Max Latency]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 733 | 739 |
+| ZFS Primary Cache: all | 287 | 52 |
+| ZFS Primary Cache: metadata | 1357 | 1435 |
+| ZFS Primary Cache: none | 402 | 3080 |
+
+![](../images/4k_random_100_pct_read_write_max_latency.PNG)
+
+### 4K Random 100% Read/Write Test [Standard Deviation]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 10 | 27 |
+| ZFS Primary Cache: all | 9 | 5 |
+| ZFS Primary Cache: metadata | 36 | 229 |
+| ZFS Primary Cache: none | 32 | 349 |
+
+![](../images/4k_random_100_pct_read_write_std_deviation.PNG)
+
+### 8K Sequential 100% Read/Write Test [Throughput]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 86532 | 106972 |
+| ZFS Primary Cache: all | 492187 | 189733 |
+| ZFS Primary Cache: metadata | 7496 | 22249 |
+| ZFS Primary Cache: none | 6758 | 22798 |
+
+![](../images/8k_random_100_pct_read_write_throughput.PNG)
+
 
