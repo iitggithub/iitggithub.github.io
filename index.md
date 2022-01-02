@@ -13,3 +13,4 @@ Published: Wednesday, 27 October 2021:
 Published: Monday, 28 May 2018
 
 * [Deploy an iPerf Speed Testing Server with Web Interface](articles/2018-05-deploy-iperf-speed-testing-server-with)
+* [Useful VMware CLI commands](articles/2018-05-useful-vmware-cli-commands)
