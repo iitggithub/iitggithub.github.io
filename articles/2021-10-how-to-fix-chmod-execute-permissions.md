@@ -21,7 +21,7 @@ Now you can't execute chmod, to change the permissions on any files on the syste
 
 #### Use the ld.so and ld-linux.so\* dynamic loader to execute chmod
 
-According to its [man page(https://linux.die.net/man/8/ld-linux)], "The programs ld.so and ld-linux.so* find and load the shared libraries needed by a program, prepare the program to run, and then run it.".
+According to its [man page](https://linux.die.net/man/8/ld-linux), "The programs ld.so and ld-linux.so\* find and load the shared libraries needed by a program, prepare the program to run, and then run it.".
 
 We can use this to execute chmod despite the fact it doesn't have execute permissions, and undo our mistake. Before doing so, we first need to find the ld linux binary. In Amazon Linux 2, I found ld.so under /usr/lib64/ld-2.26.so.
 
@@ -51,7 +51,7 @@ Finally we verify that the issue is resolved and we can execute chmod to our hea
 
 #### Using Perl
 
-Interestingly enough, perl has its chmod function [built in(https://perldoc.perl.org/functions/chmod)]. Why? I have no idea, but we can use it to fix the chmod binary.
+Interestingly enough, perl has its chmod function [built in](https://perldoc.perl.org/functions/chmod). Why? I have no idea, but we can use it to fix the chmod binary.
 
 An example is shown below:
 
