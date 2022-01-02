@@ -117,3 +117,5 @@ The results show that there is very little performance difference when using ZFS
 | ZFS Primary Cache: all | 388 | 364 | 370 | 374 | +00.54% |
 | ZFS Primary Cache: metadata | 520 | 599 | 568 | 562 | +51.08% |
 | ZFS Primary Cache: none | 626 | 654 | 634 | 638 | +71.51% |
+
+[](images/Compile+time+comparison.PNG)
