@@ -118,7 +118,7 @@ The results show that there is very little performance difference when using ZFS
 | ZFS Primary Cache: metadata | 520 | 599 | 568 | 562 | +51.08% |
 | ZFS Primary Cache: none | 626 | 654 | 634 | 638 | +71.51% |
 
-![](images/Compile+time+comparison.PNG)
+![](../images/Compile+time+comparison.PNG)
 
 ### Disk Space Consolidation
 
@@ -145,7 +145,7 @@ As was explained earlier, we could only fill the pool to just under 90% capacity
 | Local (EXT4) | 1565 | +00.00% |
 | ZFS w/ de-dupe on | 5190 | -69.85% |
 
-![](images/disk_usage.PNG)
+![](../images/disk_usage.PNG)
 
 ### IO Testing
 
@@ -154,5 +154,74 @@ The basis for this is mostly stolen from [http://www.storagereview.com/synology_
 The test names are important because my shitty bash script uses them to pull out the information and populate CSV files to make it easier to copy and paste into this report.
 
 A useful link to help you understand fio stats can be found here: [http://tfindelkind.com/2015/08/24/fio-flexible-io-tester-part8-interpret-and-understand-the-resultoutput/](http://tfindelkind.com/2015/08/24/fio-flexible-io-tester-part8-interpret-and-understand-the-resultoutput/)
+
+Below is the 4K Random 100% write test file.
+
+```
+[global]
+ioengine=libaio
+bs=4k
+# This must be set to 0 for ZFS. 1 for all others.
+direct=${DIRECT}
+# This must be set to none for ZFS. posix for all others.
+fallocate=${FALLOCATE}
+rw=randrw
+# Make sure fio will refill the IO buffers on every submit rather than just
+init
+refill_buffers
+# Setting to zero in an attempt to stop ZFS from skewing results via
+de-dupe.
+#dedupe_percentage=0
+# Setting to zero in an attempt to stop both ZFS and Nimble from skewing
+results via compression.
+buffer_compress_percentage=0
+norandommap
+randrepeat=0
+rwmixread=70
+runtime=60
+ramp_time=5
+group_reporting
+directory=${DIRECTORY}
+filename=fio_testfile
+time_based=1
+runtime=60
+[16t-rand-write-16q-4k]
+name=4k100writetest-16t-16q
+rw=randrw
+bs=4k
+rwmixread=0
+numjobs=16
+iodepth=16
+```
+
+In order to make use of the file, you'll need fio and libaio-devel installed. There's no rpm for fio so you need to download it and compile yourself.
+
+To execute a ZFS FIO test use the following:
+
+```
+$ export DIRECT=0
+$ export FALLOCATE=none
+$ export DIRECTORY=<zfs_mount>
+$ fio <FioTestFile>
+```
+
+To execute a non ZFS FIO test (ie EXT4) use the following:
+
+```
+export DIRECT=1
+export FALLOCATE=posix
+export DIRECTORY=<fs_mount>
+fio <FioTestFile>
+```
+
+#### Results
+
+What do the results say? Well, the default value for primarycache is "all". The results tell you that modifying this value is a bad idea so leave it set to the default value and instead buy enough RAM to store everything in memory. De-duplicated data is considered "metadata" so it will fight for a piece of your cache. In addition to this, you also need space for the actual hash table and whatever else ZFS stores in its cache. A more detailed explanation can be found here: http://open-zfs.org/wiki/Performance_tuning#Deduplication but the basic rule of thumb is more RAM = less problems.
+
+The results also show that in the majority of cases with the ZFS primary cache set to "all" performed better than the EXT4 logical volume. This was expected since the primary cache is using RAM after all.
+
+Below is a detailed breakdown of each of the tests.
+
+### 4K Random 100% Read/Write Test [Throughput]
 
 
