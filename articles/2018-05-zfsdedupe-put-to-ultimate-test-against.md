@@ -277,4 +277,85 @@ Below is a detailed breakdown of each of the tests.
 
 ![](../images/8k_random_100_pct_read_write_throughput.PNG)
 
+### 8K Sequential 100% Read/Write Test [Average Latency]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 2 | 2 |
+| ZFS Primary Cache: all | 1 | 1 |
+| ZFS Primary Cache: metadata | 34 | 12 |
+| ZFS Primary Cache: none | 37 | 11 |
+
+![](../images/8k_sequential_100_pct_read_write_avg_latency.PNG)
+
+### 8K Sequential 100% Read/Write Test [Max Latency]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 260 | 23 |
+| ZFS Primary Cache: all | 742 | 199 |
+| ZFS Primary Cache: metadata | 1275 | 425 |
+| ZFS Primary Cache: none | 2092 | 459 |
+
+![](../images/8k_sequential_100_pct_read_write_max_latency.PNG)
+
+### 8K Sequential 100% Read/Write Test [Standard Deviation]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 3 | 0 |
+| ZFS Primary Cache: all | 3 | 1 |
+| ZFS Primary Cache: metadata | 25 | 13 |
+| ZFS Primary Cache: none | 41 | 11 |
+
+![](../images/8k_sequential_100_pct_read_write_std_deviation.PNG)
+
+### 128K Sequential 100% Read/Write Test [Throughput]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 20830 | 25769 |
+| ZFS Primary Cache: all | 287079 | 29784 |
+| ZFS Primary Cache: metadata | 4456 | 35186 |
+| ZFS Primary Cache: none | 4606 | 32107 |
+
+![](../images/128k_sequential_100_pct_read_write_throughput.PNG)
+
+### 128K Sequential 100% Read/Write Test [Average Latency]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 12 | 9 |
+| ZFS Primary Cache: all | 1 | 8 |
+| ZFS Primary Cache: metadata | 57 | 7 |
+| ZFS Primary Cache: none | 55 | 7 |
+
+![](../images/128k_sequential_100_pct_read_avg_latency.PNG)
+
+### 128K Sequential 100% Read/Write Test [Max Latency]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 119 | 40 |
+| ZFS Primary Cache: all | 26 | 57 |
+| ZFS Primary Cache: metadata | 236 | 86 |
+| ZFS Primary Cache: none | 125 | 255 |
+
+![](../images/128k_sequential_100_pct_read_max_latency.PNG)
+
+### 128K Sequential 100% Read/Write Test [Standard Deviation]
+
+|  | 16 Thread 16 Queue 100% Read | 16 Thread 16 Queue 100% Write |
+|---|---|---|
+| EXT4 Logical Volume | 5 | 2 |
+| ZFS Primary Cache: all | 1 | 5 |
+| ZFS Primary Cache: metadata | 27 | 5 |
+| ZFS Primary Cache: none | 26 | 7 |
+
+![](../images/128k_sequential_100_pct_read_std_deviation.PNG)
+
+
+
+
+
 
