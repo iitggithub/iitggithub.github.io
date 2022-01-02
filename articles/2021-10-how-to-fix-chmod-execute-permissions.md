@@ -1,7 +1,5 @@
 ## How to fix chmod execute permissions
 
-Wednesday, 27 October 2021
-
 ### Problem
 
 You've run something like the following and accidentally removed the execute permission from /bin/chmod:

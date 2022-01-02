@@ -1,7 +1,5 @@
 ## Deploy an iPerf Speed Testing Server with Web Interface
 
-Monday, 28 May 2018
-
 Sometimes you just need to run network performance tests between two hosts. While there are tools available for running speed tests such as iPerf, they're often annoying to setup, confusing to use, and require console access to the server itself in order to test.
 
 Here's where the IITG Web-based iPerf containers come into play. With this guide, you can setup iPerf servers in multiple locations and allow network support staff to perform network testing without the need to give them console access to the server itself.

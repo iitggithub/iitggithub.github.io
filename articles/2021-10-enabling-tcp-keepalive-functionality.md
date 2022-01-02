@@ -1,7 +1,5 @@
 ## Enabling TCP Keepalive Functionality For Legacy Linux Applications
 
-Wednesday, 27 October 2021
-
 ### Problem
 
 You want to enable TCP keep alive functionality but the application either doesn't support or is being overriden by the application itself.

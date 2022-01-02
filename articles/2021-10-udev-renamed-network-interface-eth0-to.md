@@ -1,7 +1,5 @@
 ## udev: renamed network interface eth0 to eth1
 
-Wednesday, 27 October 2021
-
 ### Problem
 
 You can't access your linux machine across the network as it's not responding to ping, and ports aren't open etc.
