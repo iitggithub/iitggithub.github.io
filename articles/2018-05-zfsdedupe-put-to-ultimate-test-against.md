@@ -364,3 +364,80 @@ Below is a detailed breakdown of each of the tests.
 | ZFS Primary Cache: none | 3943 | 351 | 343 | 345 | 556 | 474 | 456 | 542 | 665 | 695 | 672 | 746 | 916 | 864 | 1009 | 968 |
 
 ![](../images/8K_random_70_read_30_throughput.PNG)
+
+### 8K Random 70% Read 30% Test [Average Latency]
+
+|  | 2 Threads<br>2 Queues | 2 Threads<br>4 Queues | 2 Threads<br>8 Queues | 2 Threads<br>16 Queues | 4 Threads<br>2 Queues | 4 Threads<br>4 Queues | 4 Threads<br>8 Queues | 4 Threads<br>16 Queues | 8 Threads<br>2 Queues | 8 Threads<br>4 Queues | 8 Threads<br>8 Queues | 8 Threads<br>16 Queues | 16 Threads<br>2 Queues | 16 Threads<br>4 Queues | 16 Threads<br>8 Queues | 16 Threads<br>16 Queues |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| EXT4 Logical Volume         | 0 | 1 | 1 | 3 | 1 | 1 | 3 | 5 | 1 | 3 | 5 | 10 | 3 | 5 | 9 | 23 |
+| ZFS Primary Cache: all      | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 3 | 0 | 1 | 3 | 6 |
+| ZFS Primary Cache: metadata | 23 | 45 | 96 | 14 | 31 | 64 | 129 | 19 | 40 | 77 | 165 | 39 | 82 | 179 | 288 |
+| ZFS Primary Cache: none     | 23 | 47 | 92 | 15 | 34 | 71 | 118 | 25 | 47 | 95 | 171 | 36 | 35 | 128 | 266 |
+
+![](../images/8K_random_70_read_30_avg_latency.PNG)
+
+### 8K Random 70% Read 30% Test [Max Latency]
+
+|  | 2 Threads<br>2 Queues | 2 Threads<br>4 Queues | 2 Threads<br>8 Queues | 2 Threads<br>16 Queues | 4 Threads<br>2 Queues | 4 Threads<br>4 Queues | 4 Threads<br>8 Queues | 4 Threads<br>16 Queues | 8 Threads<br>2 Queues | 8 Threads<br>4 Queues | 8 Threads<br>8 Queues | 8 Threads<br>16 Queues | 16 Threads<br>2 Queues | 16 Threads<br>4 Queues | 16 Threads<br>8 Queues | 16 Threads<br>16 Queues |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| EXT4 Logical Volume | 95 | 138 | 166 | 299 | 142 | 162 | 326 | 544 | 211 | 230 | 520 | 1333 | 302 | 581 | 888 | 1589 |
+| ZFS Primary Cache: all | 808 | 661 | 266 | 204 | 31 | 28 | 86 | 15 | 34 | 38 | 36 | 41 | 30 | 52 | 81 | 64 |
+| ZFS Primary Cache: metadata | 914 | 770 | 693 | 963 | 327 | 551 | 865 | 1597 | 472 | 559 | 758 | 947 | 1570 | 2082 | 2458 | 2015 |
+| ZFS Primary Cache: none | 1465 | 444 | 927 | 942 | 713 | 1478 | 4246 | 1202 | 1487 | 1523 | 1453 | 1597 | 1352 | 1195 | 1138 | 1346 |
+
+![](../images/8K_random_70_read_30_max_latency.PNG)
+
+### 8K Random 70% Read 30% Test [Standard Deviation]
+
+|  | 2 Threads<br>2 Queues | 2 Threads<br>4 Queues | 2 Threads<br>8 Queues | 2 Threads<br>16 Queues | 4 Threads<br>2 Queues | 4 Threads<br>4 Queues | 4 Threads<br>8 Queues | 4 Threads<br>16 Queues | 8 Threads<br>2 Queues | 8 Threads<br>4 Queues | 8 Threads<br>8 Queues | 8 Threads<br>16 Queues | 16 Threads<br>2 Queues | 16 Threads<br>4 Queues | 16 Threads<br>8 Queues | 16 Threads<br>16 Queues |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| EXT4 Logical Volume | 1 | 2 | 3 | 7 | 2 | 3 | 7 | 14 | 4 | 7 | 15 | 29 | 7 | 14 | 24 | 39 |
+| ZFS Primary Cache: all | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 2 | 4 |
+| ZFS Primary Cache: metadata | 5 | 22 | 27 | 61 | 14 | 29 | 61 | 102 | 20 | 36 | 63 | 101 | 62 | 140 | 274 | 248 |
+| ZFS Primary Cache: none | 8 | 17 | 41 | 51 | 21 | 63 | 128 | 68 | 58 | 83 | 145 | 138 | 56 | 45 | 109 | 191 |
+
+![](../images/8K_random_70_read_30_std_deviation.PNG)
+
+### Final Thoughts
+
+All of the solutions below either support inline deduplication/compression or will in the very near future. I've had a couple of them priced just to give people an idea. The Dell pricing is indicative whereas the pricing for the Nimble SAN controller upgrade/All Flash Array are current as of May 9th 2017.
+
+Obviously, more thought should go into picking one of these solutions than just price. Other than the amount of raw disk space each solution provides, what's below really isn't an apples to apples comparison. The SAN based solutions include other tools like 4Hr support, predictive analytics, proactive monitoring, easy to use storage management tools, capacity planning and much more which do help to justify the additional expense. An in-house solution will mean in-house support and even with my current knowledge of ZFS, i'm not 100% confident that i could fix it in an emergency 100% of the time within a reasonable time frame.
+
+With ZFS we still need to be concerned about its RAID configuration but from what i've read so far, it's not as complicated as it is for most servers/SANs (Nimble excluded) but still it's one more thing to learn and understand. While most Systems Administrators would be able to come up with a sensible configuration by themselves, i'm not sure all of them would be able to.Of course, you can ask yourself the question "How often does one need to do that?" and it's safe to say not often. It's still something worth keeping in mind though.
+
+Ultimately, ZFS would be very useful for us IF used correctly but the risks make it difficult to justify its use for production systems/storage in my opinion. These risks should be mitigated as OpenZFS matures but it's not quite there yet.
+
+### Hardware Recommendations
+
+To recap, these are the hardware stats for the test server so you don't have to scroll up.
+
+* 2 x Intel Xeon E5-2667 (3.30GHz, 15MB Cache)
+* Intel C600 Chipset
+* Memory - 32 GB (4 x 8GB) 1600Mhz DDR3 Registered RDIMMs
+* CentOS 7.1 operating system
+* PERC H710p Integrated RAID Controller, 1GB NVRAM
+* OS storage configuration - 600GB raw storage consisting of 2 x 600GB 15K RPM SAS 6Gbps 2.5in drives in RAID 1
+* Data Storage configuration - 1.8TB raw storage consisting of 6 x 600GB 15K RPM SAS 6Gbps 2.5in drives in RAID 10
+
+The test server performed quite well during testing. I'd probably recommend dual CPU's. ZFS runs quite a few processes so being able to run them on their own logical core is quite handy.
+
+RAM-wise, i'd probably recommend going with 64GB of RAM to begin with. Having said that, if you can add more ram, do it. The more RAM you have, the more data you can cache in it.
+
+If you can stretch the budget a bit more, an SSD drive (one is ok) can be used as a secondary cache. This will help reduce the need to read from the spinning disks directly.
+
+Finally, and this is an absolute MUST HAVE in my opinion. You need a SAS controller card capable of JBOD mode. While we didn't use one in testing (Because we didn't have one), you really should look into it. ZFS has it's own storage management system and it compliments the ZFS filesystem perfectly. Let ZFS manage the RAID and you'll be rewarded.
+
+### Price Comparisons
+
+elow is a price comparison of some of the options we have on the table at the time of writing. All prices are in AUD and are inclusive of GST.
+
+| Option | Price ($AUD Inc GST) |
+|---|---|
+| Dell PowerVault 1220 DAS (11TB) | $18,157 * |
+| Nimble Controller Upgrade (More Storage) | $52,953 |
+| Nimble All Flash Array (11TB) | $73,164 |
+
+\* Estimated Price
+
+![](../images/price_comparisons.PNG)
