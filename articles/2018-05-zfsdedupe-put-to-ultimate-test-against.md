@@ -354,8 +354,13 @@ Below is a detailed breakdown of each of the tests.
 
 ![](../images/128k_sequential_100_pct_read_std_deviation.PNG)
 
+### 8K Random 70% Read 30% Test [Throughput]
 
+|  | 2 Threads<br>2 Queues | 2 Threads<br>4 Queues | 2 Threads<br>8 Queues | 2 Threads<br>16 Queues | 4 Threads<br>2 Queues | 4 Threads<br>4 Queues | 4 Threads<br>8 Queues | 4 Threads<br>16 Queues | 8 Threads<br>2 Queues | 8 Threads<br>4 Queues | 8 Threads<br>8 Queues | 8 Threads<br>16 Queues | 16 Threads<br>2 Queues | 16 Threads<br>4 Queues | 16 Threads<br>8 Queues | 16 Threads<br>16 Queues |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| EXT4 Logical Volume | 4004 | 4504 | 5767 | 6943 | 4328 | 5718 | 6838 | 7658 | 5694 | 6883 | 7719 | 9284 | 6754 | 7675 | 9375 | 9227 |
+| ZFS Primary Cache: all | 50117 | 37957 | 45180 | 45199 | 46851 | 56708 | 56576 | 66382 | 38537 | 46762 | 46456 | 40270 | 38447 | 42264 | 40095 | 40322 |
+| ZFS Primary Cache: metadata | 4699 | 345 | 355 | 333 | 562 | 528 | 498 | 496 | 833 | 810 | 837 | 779 | 846 | 798 | 723 | 887 |
+| ZFS Primary Cache: none | 3943 | 351 | 343 | 345 | 556 | 474 | 456 | 542 | 665 | 695 | 672 | 746 | 916 | 864 | 1009 | 968 |
 
-
-
-
+![](../images/8K_random_70_read_30_throughput.PNG)
