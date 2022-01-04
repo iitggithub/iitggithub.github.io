@@ -6,7 +6,7 @@ The random IT blog is a random IT blog written by a random IT guy that's mostly 
 
 * [Soundproof Server Room In A Box](articles/soundproof-server-room-in-box)
 
-## Topics
+## How To Articles
 
 Published: Wednesday, 27 October 2021:
 
