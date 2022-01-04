@@ -2,6 +2,10 @@
 
 The random IT blog is a random IT blog written by a random IT guy that's mostly about random IT related... stuff. It's mostly here so I don't forget this stuff.. or if I do forget it, so i can remember it again.
 
+## Datacentre/Server Room work
+
+* [Soundproof Server Room In A Box](articles/soundproof-server-room-in-box)
+
 ## Topics
 
 Published: Wednesday, 27 October 2021:
