@@ -8,9 +8,9 @@ Instead, we agreed on using a couple of network switches stacked together and ru
 
 While this sounded good in theory, we didn't have anywhere to put a rack full of switches, patch panels, UPS, PDU and cooling that didn't look ugly. There was also the noise consideration as well since most managed switches are super loud!
 
-The fit out consisted of a total of 140 odd network ports. This involved working quite closely with the customer and electricians to determine how many ports were needed, where the cable runs should be placed, how big of a service loop to provide, and making sure the bend radius for cables isn't too step going into the enclosure.
+The fit out consisted of a total of 140 odd network ports. This involved working quite closely with the customer and electricians to determine how many ports were needed, where the cable runs should be placed, how big of a service loop to provide, and making sure the bend radius for cables isn't too steep going into the enclosure.
 
-The SFP modules are connected to a stack of three, Cisco Catalyst 2960S 48 port switches (non POE) providing a small measure of redundancy.
+The SFP modules ( Cisco 10GBASE SE-SR SFP ) are connected to a stack of three, Cisco Catalyst 2960S 48 port switches (non POE) providing a small measure of redundancy.
 
 ![](../images/16463390716_f21312288f_o.jpg)
 
