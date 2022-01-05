@@ -44,7 +44,7 @@ Finally, you can go online and try out the web interface for free and even navig
 
 #### Air Flow Meter (Anemometer) - [Jaycar QM1646 Hand-held Anemometer with Separate Sensor](https://www.jaycar.com.au/hand-held-anemometer-with-separate-sensor/p/QM1646)
 
-![](QM1646-hand-held-anemometer-with-separate-sensorImageMain-515.jpg)
+![](../images/QM1646-hand-held-anemometer-with-separate-sensorImageMain-515.jpg)
 
 A handheld anemometer allows you to place the sensor right in the path of the airflow and monitor how much air passes through the fan. Combining this with your temperature readings you can use this information to determine if you've got enough flow across your servers. If you don't have enough flow, you may need more cooling or more/larger ducting.
 
