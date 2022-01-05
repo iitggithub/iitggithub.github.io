@@ -26,6 +26,10 @@ If you're using thermal containment, you may want to do the same in your hot ais
 
 ### Products
 
+Please note i'm not sponsored by any of the companies I use, and they don't provide their product to me for free. My opinions and recommendations for any products are my own and you should do your own research to see whether any of these products are right for you.
+
+Since my previous projects have featured APC products quite heavily (because customers like to use them), I often find myself using their [Temperature & Humidity Sensor (AP9335TH)](https://www.mwave.com.au/product/apc-temperature-humidity-sensor-ap9335th-aa14258?gclid=Cj0KCQiA_c-OBhDFARIsAIFg3ezq2124E3OnN6WnqFPJyRfu2R6JJzaqT-71In1ZWaaeP8bNjY65ikgaAuN3EALw_wcB&__cf_chl_jschl_tk__=efMYoiIB3rnPP2mN.xuEvBOOuzlS2_VEmUrxQW2AyYM-1641359687-0-gaNycGzNCVE). This does however require the use of the [APC UPS Network Management Card 2 with environmental monitoring](https://upssolutions.com.au/products/ups-network-management-card-2-with-environmental-monitoring?variant=21744625483834&currency=AUD&utm_medium=product_sync&utm_source=google&utm_content=sag_organic&utm_campaign=sag_organic&gclid=Cj0KCQiA_c-OBhDFARIsAIFg3ezTXF2QSSgroGPCoMvW-pphMCmC6BEHdV6-vZ8Zz3jsFQMOYsman_saAok6EALw_wcB) in order to connect the probes to a UPS which can be a fairly expensive endeavour. However, if you're just starting out and don't want to be locked into a particular vendor for both your UPS's and your environmental monitoring then my next product suggestion may be of use to you.
+
 #### Temperature/Hunidity etc monitoring - Geist Watchdog 1200 climate monitor
 
 Now that we have figured out what we want to monitor, where the sensors should be placed and how many we need, we should probably look at some products.
