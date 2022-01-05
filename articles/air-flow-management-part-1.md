@@ -4,7 +4,7 @@ Air flow management in smaller environments has often been a point of contention
 
 ### Everything Starts With Measurements
 
-[![](../images/Measuring-tape.jpg)](https://www.amazon.com.au/Hultafors-Talmeter-Marking-Measure-HULTALM3/dp/B0041YQFY6/ref=asc_df_B0041YQFY6/?tag=googleshopdsk-22&linkCode=df0&hvadid=341793407486&hvpos=&hvnetw=g&hvrand=9348708465173918595&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9071726&hvtargid=pla-563524355439&th=1)
+[![](../images/Blade-Shield.gif)](https://www.amazon.com.au/Hultafors-Talmeter-Marking-Measure-HULTALM3/dp/B0041YQFY6/ref=asc_df_B0041YQFY6/?tag=googleshopdsk-22&linkCode=df0&hvadid=341793407486&hvpos=&hvnetw=g&hvrand=9348708465173918595&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9071726&hvtargid=pla-563524355439&th=1)
 
 No, not those kinds of measurements! They can be helpful when calculating volume etc, i'm actually referring to taking temperature, humidity, and airflow measurements.
 
