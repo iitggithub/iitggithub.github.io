@@ -5,6 +5,8 @@ The random IT blog is a random IT blog written by a random IT guy that's mostly 
 ## Datacentre/Server Room work
 
 * [Soundproof Server Room In A Box](articles/soundproof-server-room-in-box)
+* [Air Flow Management (Part 1)](articles/air-flow-management-part-1.md)
+* [Air Flow Management (Part 2)](articles/air-flow-management-part-2.md)
 
 ## How To Articles
 
