@@ -1,6 +1,6 @@
 ## Logging into my computer with an RFID card
 
-On the list of stupid things to do, this is probably up there. We usually have fairly restrictive password policies in corporate environments and it gets difficult to remember which password I've currently set. It's also quite frustrating when you accidentally type it wrong and get your account locked.
+On the list of stupid things to do, this is probably up there. We usually have fairly restrictive password policies in corporate environments and it gets difficult to remember which password I've currently set. It's also quite frustrating when you accidentally type it wrong and get your account locked. This gets annoying especially when you're operating in a completely isolated development environment which will eventually get torn down anyway once you're finishing testing.
 
 I decided that there had to be a better a way and so I decided to use a spare RFID card as a means to authenticate myself and enter my password. By doing so, I could use a randomly generated password which conforms to any password policy requirements and because the password is compiled into code it remains somewhat secure.
 
@@ -9,7 +9,7 @@ Seriously, don't do this unless it's in a development environment. I am not resp
 ### Items Needed
 
 1. RFID Scanner such as the [https://www.adafruit.com/product/789](Adafruit PN532 NFC/RFID Controller Shield)
-2. [https://core-electronics.com.au/arduino-leonardo.html](Arduino Leonardo with Headers) (or equivalent such as Esplora, Zero, Due and MKR Family boards)
+2. [https://core-electronics.com.au/arduino-leonardo.html Arduino Leonardo with Headers] (or equivalent such as Esplora, Zero, Due and MKR Family boards)
 3. [https://core-electronics.com.au/shield-stacking-headers-for-arduino-r3-compatible.html](Stacking header pins) for Arduino
 4. [https://core-electronics.com.au/micro-usb-cable.html](Micro USB to USB A cable) (for connecting the Leonardo to the computer)
 
