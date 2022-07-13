@@ -10,6 +10,10 @@ The random IT blog is a random IT blog written by a random IT guy that's mostly 
 
 ## How To Articles
 
+Published: Wednesday, 13 July 2022:
+
+* [How to use an RFID card to log into your computer](articles/rfid-login.md)
+
 Published: Wednesday, 27 October 2021:
 
 * [How to fix chmod execute permissions](articles/2021-10-how-to-fix-chmod-execute-permissions)

@@ -402,7 +402,7 @@ Below is a detailed breakdown of each of the tests.
 
 All of the solutions below either support inline deduplication/compression or will in the very near future. I've had a couple of them priced just to give people an idea. The Dell pricing is indicative whereas the pricing for the Nimble SAN controller upgrade/All Flash Array are current as of May 9th 2017.
 
-Obviously, more thought should go into picking one of these solutions than just price. Other than the amount of raw disk space each solution provides, what's below really isn't an apples to apples comparison. The SAN based solutions include other tools like 4Hr support, predictive analytics, proactive monitoring, easy to use storage management tools, capacity planning and much more which do help to justify the additional expense. An in-house solution will mean in-house support and even with my current knowledge of ZFS, i'm not 100% confident that i could fix it in an emergency 100% of the time within a reasonable time frame.
+What's below really isn't an apples to apples comparison. The SAN-based solutions include other features such as 4Hr support, predictive analytics, proactive monitoring, easy to use storage management tools, capacity planning and much more which do help to justify the additional expense. An in-house solution will mean in-house support and even with my current knowledge of ZFS, i'm not 100% confident that i could fix it in an emergency 100% of the time within a reasonable time frame.
 
 With ZFS we still need to be concerned about its RAID configuration but from what i've read so far, it's not as complicated as it is for most servers/SANs (Nimble excluded) but still it's one more thing to learn and understand. While most Systems Administrators would be able to come up with a sensible configuration by themselves, i'm not sure all of them would be able to.Of course, you can ask yourself the question "How often does one need to do that?" and it's safe to say not often. It's still something worth keeping in mind though.
 
@@ -410,19 +410,9 @@ Ultimately, ZFS would be very useful for us IF used correctly but the risks make
 
 ### Hardware Recommendations
 
-To recap, these are the hardware stats for the test server so you don't have to scroll up.
+During testing it was observed that ZFS runs quite a few processes so being able to run them on their own logical core is quite handy to avoid any CPU contension issues. The more CPU's and more cores you can get your hands on, the better.
 
-* 2 x Intel Xeon E5-2667 (3.30GHz, 15MB Cache)
-* Intel C600 Chipset
-* Memory - 32 GB (4 x 8GB) 1600Mhz DDR3 Registered RDIMMs
-* CentOS 7.1 operating system
-* PERC H710p Integrated RAID Controller, 1GB NVRAM
-* OS storage configuration - 600GB raw storage consisting of 2 x 600GB 15K RPM SAS 6Gbps 2.5in drives in RAID 1
-* Data Storage configuration - 1.8TB raw storage consisting of 6 x 600GB 15K RPM SAS 6Gbps 2.5in drives in RAID 10
-
-The test server performed quite well during testing. I'd probably recommend dual CPU's. ZFS runs quite a few processes so being able to run them on their own logical core is quite handy.
-
-RAM-wise, i'd probably recommend going with 64GB of RAM to begin with. Having said that, if you can add more ram, do it. The more RAM you have, the more data you can cache in it.
+In terms of RAM, it's a case of if you can add more ram, do it. The more RAM you have, the more data you can cache in it.
 
 If you can stretch the budget a bit more, an SSD drive (one is ok) can be used as a secondary cache. This will help reduce the need to read from the spinning disks directly.
 
