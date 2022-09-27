@@ -6,12 +6,57 @@ Unfortunately, most of the alternatives run older versions of Ubuntu or Debian w
 
 This guide will go through configuring OctoPrint under Ubuntu 16.04. Specifically the flavour released by Orange Pi which i'm using with the Orange Pi Zero R1.
 
-If you're running a few instances of OctoPrint already then this guide will help you because we'll be configuring it inline with what you can expect from a standard OctoPi installation.
-
 ### Items Needed
 
 1. A single board computer such as the Orange Pi Zero or Banana Pi Zero etc.
 2. Access to the SBC via its default SSH credentials
+
+### (Optional but highly recommended) create a dedicated pi user
+
+I run a couple of 3D printers via OctoPrint and most use a Raspberry Pi 4 or a Raspberry Pi Zero W depending on whether they're running webcams or not. I personally like that all of my installations look and feel the same way as that'll make it easier to make changes to them.
+
+I usually start by creating a dedicated pi user similar to that used by Raspberry Pi OS. Since this is an optional step, you can skip this part but if you do wish to proceed with this, you'll need to modify any commands or steps that mention orangepi as the user and instead use pi as your user.
+
+#### Create the user account
+
+Use the command below to create the new user. You can also omit the "--disable-password" flag and the adduser command will ask you to set a password. I personally use SSH key based authentication so never have a need to set a password.
+
+```
+orangepi@orangepir1:~$ sudo adduser --home /home/pi --shell /bin/bash --disabled-password pi
+Adding user `pi' ...
+Adding new group `pi' (1003) ...
+Adding new user `pi' (1003) with group `pi' ...
+Creating home directory `/home/pi' ...
+Copying files from `/etc/skel' ...
+Changing the user information for pi
+Enter the new value, or press ENTER for the default
+	Full Name []: 
+	Room Number []: 
+	Work Phone []: 
+	Home Phone []: 
+	Other []: 
+Is the information correct? [Y/n] Y
+orangepi@orangepir1:~$ 
+``` 
+
+#### Allow Sudo access
+
+This is somewhat controversial but I usually give the pi user access to execute commands as the root user via sudo and I provide that user with full permissions. The reality is that I'm only usually this to run OctoPrint and I never need to use the root account. I also have some accountability since sudo commands are logged in /var/log/auth.log. It's good practice to NEVER use the root user account and the sooner you begin to reduce your reliance on the root user, the better off you'll be in the long run.
+
+```
+orangepi@orangepir1:~$ cat | sudo tee /etc/sudoers.d/ubuntu <<EOF
+ubuntu ALL=(ALL) NOPASSWD: ALL
+EOF
+
+orangepi@orangepir1:~$
+```
+
+Now you can change to your new user and begin the installation as the pi user.
+
+```
+orangepi@orangepir1:~$ sudo su - pi
+pi@orangepir1:~$ 
+```
 
 ### Installing Python 3.6
 
