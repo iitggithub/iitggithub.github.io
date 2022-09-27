@@ -282,11 +282,15 @@ The service will fail to start if no webcam is connected to your device. If the 
 
 Log into the OctoPrint Web interface and click on the wrench icon in the top right corner to open the OctoPrint server settings.
 
+![](../images/octoprint_settings.png)
+
 Under Features, choose Webcam and Timelapse.
 
 Under Webcam, choose Enable webcam support.
+![](../images/octoprint_webcam.png)
 
 (Optional) Under Timelapse Recordings, choose Enable timelapse support.
+![](../images/octoprint_timelapse.png)
 
 Choose Save.
 
