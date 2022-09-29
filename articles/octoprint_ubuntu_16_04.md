@@ -4,14 +4,18 @@ Recently there's been a shortage of Raspberry Pi boards on the market which has 
 
 Unfortunately, most of the alternatives run older versions of Ubuntu or Debian which aren't compatible with most recent versions of OctoPrint which requires Python 3.6 as a minimum.
 
-This guide will go through configuring OctoPrint under Ubuntu 16.04. Specifically the flavour released by Orange Pi which i'm using with the Orange Pi Zero R1.
+This guide will go through configuring OctoPrint under Ubuntu 16.04. Specifically the flavour released by Orange Pi which i'm using with the Orange Pi Zero R1 but it should be fairly similar for other Single Board Computers (SBC's).
+
+Please note however that this isn't an endorsement for the Orange Pi Zero R1. The reason i'm using it is because it was the only SBC I had lying around. As a general rule however, you should use an SBC with at least 2 CPU cores, and 1GB of RAM.
+
+Finally, if you're using another board which has a different default username other than orangepi, you'll need to modify any of the commands which mention orangepi and replace it with your username whether that be pi, bananapi, ubuntu etc.
 
 ### Items Needed
 
 1. A single board computer such as the Orange Pi Zero or Banana Pi Zero etc.
 2. Access to the SBC via its default SSH credentials
 
-### (Optional but highly recommended) create a dedicated pi user
+### (Optional but highly recommended) Create a dedicated pi user
 
 I run a couple of 3D printers via OctoPrint and most use a Raspberry Pi 4 or a Raspberry Pi Zero W depending on whether they're running webcams or not. I personally like that all of my installations look and feel the same way as that'll make it easier to make changes to them.
 
@@ -24,8 +28,8 @@ Use the command below to create the new user. You can also omit the "--disable-p
 ```
 orangepi@orangepir1:~$ sudo adduser --home /home/pi --shell /bin/bash --disabled-password pi
 Adding user `pi' ...
-Adding new group `pi' (1003) ...
-Adding new user `pi' (1003) with group `pi' ...
+Adding new group `pi' (1001) ...
+Adding new user `pi' (1001) with group `pi' ...
 Creating home directory `/home/pi' ...
 Copying files from `/etc/skel' ...
 Changing the user information for pi
@@ -41,11 +45,11 @@ orangepi@orangepir1:~$
 
 #### Allow Sudo access
 
-This is somewhat controversial but I usually give the pi user access to execute commands as the root user via sudo and I provide that user with full permissions. The reality is that I'm only usually this to run OctoPrint and I never need to use the root account. I also have some accountability since sudo commands are logged in /var/log/auth.log. It's good practice to NEVER use the root user account and the sooner you begin to reduce your reliance on the root user, the better off you'll be in the long run.
+This is somewhat controversial but I usually give the pi user access to execute commands as the root user via sudo and I provide that user with the ability to run any command without the need to enter a password. The reality is that I'm only usually this to run OctoPrint and I never need to use the root account. I also have some accountability since sudo commands are logged in /var/log/auth.log. It's good practice to NEVER use the root user account and the sooner you begin to reduce your reliance on the root user, the better off you'll be in the long run.
 
 ```
-orangepi@orangepir1:~$ cat | sudo tee /etc/sudoers.d/ubuntu <<EOF
-ubuntu ALL=(ALL) NOPASSWD: ALL
+orangepi@orangepir1:~$ cat | sudo tee /etc/sudoers.d/pi <<EOF
+pi ALL=(ALL) NOPASSWD: ALL
 EOF
 
 orangepi@orangepir1:~$
@@ -70,7 +74,7 @@ Python 3.5.2
 In my case it was 3.5.2 and this is the only version that's available for my distro.
 
 ```
-orangepi@orangepir1:~$ sudo apt-cache policy python3
+orangepi@orangepir1:~$ sudo apt-get update && sudo apt-cache policy python3
 python3:
   Installed: 3.5.1-3
   Candidate: 3.5.1-3
@@ -83,6 +87,8 @@ Unfortunately, installing Python3.6 has become quite difficult in 2022 when this
 
 #### Install the required packages
 
+The commands below install the required packages which are necessary to compile Python 3.6 from source.
+
 ```
 orangepi@orangepir1:~$ sudo apt-get update
 orangepi@orangepir1:~$ sudo apt-get install -y build-essential checkinstall
@@ -91,22 +97,22 @@ orangepi@orangepir1:~$ sudo apt-get install -y libreadline-gplv2-dev libncursesw
 
 #### Download Python 3.6 from python.org
 
-I used 3.6.10. Why 3.6.10 and not something newer? Not sure... i just picked a minor version at random. You can new versions of Python 3.6 if you like as the process is still the same.
+I used 3.6.10. Why 3.6.10 and not something newer? Not sure... i just picked a minor version at random. You can use newer versions of Python 3.6 such as 3.6.15 if you like. The process is still the same and only the version numbers will change.
 
 ```
-orangepi@orangepir1:~$ curl -o python-3.6.10.tgz https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tgz
+orangepi@orangepir1:~$ curl -o python.tgz https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tgz
 ```
 
 #### Decompress the archive
 
 ```
-orangepi@orangepir1:~$ sudo tar xzf python-3.6.10.tgz
+orangepi@orangepir1:~$ sudo tar xzf python.tgz
 ```
 
 #### Compile and install Python 3.6
 
 ```
-orangepi@orangepir1:~$ cd python-3.6.10.tgz
+orangepi@orangepir1:~$ cd python-3.6.10
 orangepi@orangepir1:~$ sudo ./configure --enable-optimizations
 orangepi@orangepir1:~$ sudo make altinstall
 ```
@@ -122,7 +128,7 @@ Python 3.6.10
 
 #### Install supporting packages
 
-It is recommended to run OctoPrint in a Python virtual environment so we need to install the virtual environment Python module.
+It is recommended to run OctoPrint in a Python virtual environment and this will make sure we don't break or modify our newly installed version of Python 3.6 so we need to install the virtual environment Python module.
 
 ```
 orangepi@orangepir1:~$ sudo /usr/local/bin/python3.6 -m pip install virtualenv
@@ -142,6 +148,8 @@ orangepi@orangepir1:~$ pip install OctoPrint
 ```
 
 #### Install the OctoPrint systemd service file
+
+By default there's no real way to manage starting and stopping OctoPrint. I've created a systemd service file which will be used instead.
 
 ```
 orangepi@orangepir1:~$ cat | sudo tee /etc/systemd/system/octoprint.service <<EOF
@@ -215,7 +223,7 @@ You don't have to install and configure webcam support but I recommend that you 
 
 #### Install required packages
 
-The webcamd service will handle serving our webcam up for OctoPrint and the v4l-utils allows us to use the v4l2-ctl command which tells us which device the webcam is connected to and make changes to the webcam configuration.
+The webcamd service will handle serving our webcam up for OctoPrint and the v4l-utils allows us to use the v4l2-ctl command which can help us adjust the webcam settings for our environment if the default settings are not adequate.
 
 ```
 orangepi@orangepir1:~$ sudo apt-get update && sudo apt-get install -y webcamd v4l-utils
