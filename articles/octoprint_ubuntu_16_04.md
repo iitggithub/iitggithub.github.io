@@ -23,7 +23,7 @@ I usually start by creating a dedicated pi user similar to that used by Raspberr
 
 #### Create the user account
 
-Use the command below to create the new user. You can also omit the "--disable-password" flag and the adduser command will ask you to set a password. I personally use SSH key based authentication so never have a need to set a password.
+Use the command below to create the new user. You can also omit the "`--disable-password`" flag and the adduser command will ask you to set a password. I personally use SSH key based authentication so never have a need to set a password.
 
 ```
 orangepi@orangepir1:~$ sudo adduser --home /home/pi --shell /bin/bash --disabled-password pi
