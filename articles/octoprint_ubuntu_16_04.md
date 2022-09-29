@@ -353,8 +353,8 @@ Without these error files, the service won't start but essentially, the contents
 Currently they're stored in my GitHub but as soon as I find who maintains them, i'll update the documentation.
 
 ```
-orangepi@orangepir1:~$ sudo curl -o /etc/haproxy/errors/503-no-webcam.http haproxy-errors-503-no-webcam.http
-orangepi@orangepir1:~$ sudo curl -o /etc/haproxy/errors/503-no-octoprint.http haproxy-errors-503-no-octoprint.http
+orangepi@orangepir1:~$ sudo curl -o /etc/haproxy/errors/503-no-webcam.http https://iitggithub.github.io/files/503-no-octoprint.http
+orangepi@orangepir1:~$ sudo curl -o /etc/haproxy/errors/503-no-octoprint.http https://iitggithub.github.io/files/503-no-webcam.http
 ```
 
 #### Generate the self-signed SSL certificate
