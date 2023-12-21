@@ -10,6 +10,11 @@ The random IT blog is a random IT blog written by a random IT guy that's mostly 
 
 ## How To Articles
 
+
+Published: Thursday, 21 December 2023:
+
+* [How to fix ssh permissions on your EC2 instance](articles/fix_ssh.md)
+
 Published: Wednesday, 13 July 2022:
 
 * [How to use an RFID card to log into your computer](articles/rfid-login.md)
