@@ -13,7 +13,7 @@ The random IT blog is a random IT blog written by a random IT guy that's mostly 
 
 Published: Thursday, 21 December 2023:
 
-* [How to fix ssh permissions on your EC2 instance](articles/fix_ssh.md)
+* [How to fix ssh permissions on your EC2 instance](articles/fixing_ssh.md)
 
 Published: Wednesday, 13 July 2022:
 
