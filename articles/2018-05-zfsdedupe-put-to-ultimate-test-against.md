@@ -2,17 +2,49 @@
 
 ### Overview
 
-The aim of this task is to re-evaluate the viability of ZFS in our test environment. Concerns were raised over the original test results such as;
+The aim was to evaluate ZFS in a simulated test environment comparing it against local disk storage (ext4), and SAN storage solutions. Comparisons will be made in terms of (but not neccesarily limited to):
 
-1. IO statistics grossly exceed expectations (Could have been influenced by system RAM)
-2. Multiple ZFS deadlocks occurring (Possibly due to CPU/RAM contention on the test system)
-3. Disk usage savings did not meet or exceed expectations (Possibly due to limiting the amount of user data copied to the machine)
+1. Performance
+2. Storage utilisation
+3. Cost
+4. Vendor Support
 
-Although the hardware is exactly the same as the previous ZFS test hardware, the results from this round of testing cannot be merged with previous results due to:
+#### End User Analysis
 
-1. Changes in drive/raid configuration
-2. ZFS record size is set to default (128K)
-3. Test server does not have access to the Nimble CS215 SAN
+The customer was asked to list the teams that utilise the existing storage solution. From those teams, a random team member was selected for participation in the analysis though their actual involvement was to be kept to a minimum.
+
+After interviewing each team member, it was clear that the storage was being utilised for 2 purposes:
+
+1. User home directory sharing
+2. Interacting with source code checkouts for various software products, releases and branches
+3. Enabling machines to automatically compile and test source code
+
+The primary methods for interacting with the storage is NFS (Via AutoFS) and Samba (Mainly for Windows machines).
+
+Since one of the main uses for the storage system was software compilation, the customer was asked to develop a compilation test which we could use to test the performance of each storage system. This "compilation test" would be used as an additional data point when evualating the effectiveness of each solution.
+
+### Testing Process
+
+A total of 3 tests will be performed. All of which are outlined below;
+
+1. Compilation Speed
+2. Disk Space Consolidation
+3. IO Tests
+
+#### Compilation Speed
+
+The compilation test is executed three times with the resulting run times recorded and then averaged. Flock is used to make sure that compilation times are not influenced by cache.
+
+This test requires the use of a "helper" server. The helper server should be unused and ideally connected to the same network switch as the test server. By using a helper server, we ensure that the CPU/Memory used for compilation isn't impacting the CPU/Memory being used by ZFS.
+
+The helper server isn't necessarily required when comparing compiliation speeds using local SAS storage or SAN storage, but for comparison purposes, these tests will also use the helper server.
+
+NFS mount options are to be kept indentical to those used during production. For reference, this options are:
+
+```
+rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport,_netdev,nofail
+
+```
 
 #### Hardware Configuration
 
@@ -28,9 +60,11 @@ The hardware being used for this test is a Dell PowerEdge R720 server with the f
 
 #### ZFS Benchmark Setup
 
-Because we're using the Dell PERC H710p Integrated RAID Controller, we can't configure ZFS exactly how it prefers to be configured. This would otherwise require JBOD mode, which the H710p card doesn't support. To remedy this, we would need to purchase a PowerVault MD12xx direct attached storage enclosure which includes a PERC H810 RAID Adapter card that does support JBOD mode or (even better) a HBA where ZFS has complete control over the entire world. The more information ZFS has about the disks it's using the better it's able to manage and assess the health of the disks. You can read al about it at [http://open-zfs.org/wiki/Hardware#Hardware_RAID_controllers](http://open-zfs.org/wiki/Hardware#Hardware_RAID_controllers).
+ZFS is optimised to run with storage attached in JBOD mode. However, since a JBOD card was not available, (The PERC H710p doesn't support JBOD mode) the data storage area that will be used for testing is configured in raid 10.
 
-We'll also be performing tests with ZFS primarycache set to "all", "metadata" and "none". Just so you are aware, these are the commands you'll need to know in order to change the primarycache setting for the entire pool.
+In future, a PowerVault MD12xx direct attached storage enclosure which includes a PERC H810 RAID Adapter card that supports JBOD mode would need to be used. The more information ZFS has about the disks it's using the better it's able to manage and assess the health of the disks. You can read al about it at [http://open-zfs.org/wiki/Hardware#Hardware_RAID_controllers](http://open-zfs.org/wiki/Hardware#Hardware_RAID_controllers).
+
+ZFS testing will be repeated with the ZFS primarycache set to "all", "metadata" and "none". These are the commands you'll need to know in order to change the primarycache setting for the entire pool.
 
 ##### Changing the primarycache to "all"
 
@@ -56,52 +90,16 @@ $ zfs create -o de-dup=on -o atime=off zfs/data
 $ zfs mount zfs/data /data
 ```
 
-### Test Data
-
-All access to /data is severed to ensure the data contained remained consistent and the tests are not influenced by end users.
-
-There's two types of test data:
-
-1. Compile data
-2. User data
-
-#### Compile Data
-
-This is a piece of software to be compiled. To be fair, this could be any piece of software which could be compiled under Linux but the more organisational specific it is, the more relatable it will be to the end users. Since this machine will store software that needs to be compiled anyway, it makes sense to perform a couple of timed compilation tests.
-
-The test data is stored under /data (wherever is convenient) and will be accessed from a remote "helper" server via NFS. More on that later..
-
-#### User Data
-
-This is the reason why we're here. How much of this data can fit into 1.8TB of raw storage. Our users data (known herein as user data) will be migrated via rsync to the test server. How many exactly? enough to fill 100% of the space available. That should be quite a bit... we might not have enough data.
-
-### Testing Process
-
-A total of 3 tests will be performed. All of which are outlined below;
-
-1. Compilation Speed
-2. Disk Space Consolidation
-3. IO Tests
-
-#### Compilation Speed
-
-This test aims to compare ZFS using an organisational specific metric that everyone is able to understand - software compilation times. The compilation test is executed three times, timed and the resulting run times are then averaged. Flock is used to make sure that compilation times are not influenced by cache.
-
-This test requires the use of a "helper" server. This server should be be unused and ideally connected to the same network switch as the test server. This is to ensure that the testing environment remains consistent throughout the test.
-
-Also since we'll be accessing the data via NFS, it's important set the mount options exactly as they are in production. Failure to do so could impact test results.
 
 ##### Mount the test directory via NFS
 
 ```
-$ sudo mkdir -p /mnt/compile_test && sudo mount -t nfs -o
-"vers=3,rsize=8192,wsize=8192,soft" zfs:/data/compile_test
-/mnt/compile_test
+$ sudo mkdir -p /mnt/compile_test && sudo mount -t nfs -o "rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport,_netdev,nofail" zfs:/data/compile_test /mnt/compile_test
 ```
 
 ### Testing Procedure
 
-From within the testing directory, execute the following:
+From within the testing directory, the following command was executed. This uses flock and all available CPU's.
 
 ```
 $ flock /tmp/compile.lock -c "make veryclean && time make -j `grep processor -c /proc/cpuinfo`"
@@ -109,7 +107,7 @@ $ flock /tmp/compile.lock -c "make veryclean && time make -j `grep processor -c 
 
 #### Results
 
-The results show that there is very little performance difference when using ZFS with in-line deduplication. This is very interesting because the previous compile tests showed a 25% difference which i now believe was due to the fact that we were attempting a CPU intensive workload on the same machine which was running ZFS. For me, it's validation that says we should never use a ZFS server for anything other than ZFS unless it's absolutely necessary.
+The results show that there is very little performance difference when using ZFS with in-line deduplication. Previous compilation testing with ZFS running on the same server as the compilation test showed a 25% drop in average compilation times across the various ZFS configurations. The difference highlights the fact that ZFS should not be run a server that is being utilised for other CPU/Memory intensive workloads.
 
 |  | Run 1 | Run 2 | Run 3 | Average | % Difference |
 |---|---|---|---|---|---|
@@ -122,13 +120,13 @@ The results show that there is very little performance difference when using ZFS
 
 ### Disk Space Consolidation
 
-Given the original filesystem was ext4 based, obviously, it had 0 disk space consolidation savings. What we're really after is a figure that tells us how much user data we've been able to cram into our ZFS volume.
+Given the existing filesystem is ext4 based, obviously, it had 0 disk space consolidation savings. What we're really after is a figure that tells us how much user data we've been able to cram into our ZFS volume.
 
 #### ZFS
 
-Since we only have 1.8TB of raw space and some of that gets eaten up by system overheads, we're left with 1.62TB of available disk space for the ZFS pool. ]The ZFS pool seems to reserve some of this space so the pool can never grow beyond 90% capacity. This leaves us with only 1.46TB of usable disk space.
+Since we only have 1.8TB of raw space and some of that gets eaten up by system overheads, we're left with 1.62TB of available disk space for the ZFS pool. The ZFS pool seems to reserve some of this space so the pool can never grow beyond 90% capacity. This leaves us with only 1.46TB of usable disk space.
 
-When deduplication and/or compression is enabled, it's hard to know exactly how much of that 1.46TB you've really used. The command below will tell you but to be honest, if the df command tells you the disk is full, it's damn well full.
+When deduplication and/or compression is enabled, it's hard to know exactly how much of that 1.46TB you've really used. The command below will tell you but to be honest, if the df command tells you the disk is full, it's full.
 
 ##### This commands will tell you how much of your 1.46TB has actually been consumed.
 
@@ -138,7 +136,7 @@ $ zpool get allocated zfs
 
 #### Results
 
-As was explained earlier, we could only fill the pool to just under 90% capacity. As you can see from the graph below, we managed to squeeze in an impressive 5.19TB of real user data onto the our 1.46TB of available disk space. That's a 71.87% reduction with a deduplication ratio of 3.59x ! At the time of writing (and for comparison purposes) we have 8TB of user data currently spread across two hosts with roughly 300GB saved due to the in-line compression provided by the Nimble SAN.
+As was explained earlier, we could only fill the pool to just under 90% capacity. As you can see from the graph below, we managed to squeeze in an impressive 5.19TB of real user data onto the our 1.46TB of available disk space. That's a 71.87% reduction with a deduplication ratio of 3.59x ! At the time of writing (and for comparison purposes) there is 8TB of user data currently spread across two hosts with roughly 300GB saved due to the in-line compression provided by the Nimble SAN.
 
 |  | Disk Usage (GB) | % Difference |
 |---|---|---|
@@ -216,9 +214,11 @@ fio <FioTestFile>
 
 #### Results
 
-What do the results say? Well, the default value for primarycache is "all". The results tell you that modifying this value is a bad idea so leave it set to the default value and instead buy enough RAM to store everything in memory. De-duplicated data is considered "metadata" so it will fight for a piece of your cache. In addition to this, you also need space for the actual hash table and whatever else ZFS stores in its cache. A more detailed explanation can be found here: http://open-zfs.org/wiki/Performance_tuning#Deduplication but the basic rule of thumb is more RAM = less problems.
+What do the results say? Well, the default value for primarycache is "all". The results tell you that modifying this value is a bad idea so leave it set to the default value and instead buy as much RAM as you can to store both ZFS metadata and as much data as you can in RAM so it can be served back to the end users as fast as possible.
 
-The results also show that in the majority of cases with the ZFS primary cache set to "all" performed better than the EXT4 logical volume. This was expected since the primary cache is using RAM after all.
+De-duplicated data is considered "metadata" so it will fight for a piece of your cache. In addition to this, you also need space for the actual hash table and whatever else ZFS stores in its cache. A more detailed explanation can be found here: http://open-zfs.org/wiki/Performance_tuning#Deduplication but the basic rule of thumb is more RAM = less problems.
+
+The results also show that in the majority of cases with the ZFS primary cache set to "all" performed better than the EXT4 logical volume. This was expected since the primary cache is using RAM.
 
 Below is a detailed breakdown of each of the tests.
 
@@ -400,13 +400,13 @@ Below is a detailed breakdown of each of the tests.
 
 ### Final Thoughts
 
-All of the solutions below either support inline deduplication/compression or will in the very near future. I've had a couple of them priced just to give people an idea. The Dell pricing is indicative whereas the pricing for the Nimble SAN controller upgrade/All Flash Array are current as of May 9th 2017.
+All of the solutions below either support inline deduplication/compression or will in the very near future. I've had a couple of them priced just to give people an idea. The Dell pricing is indicative whereas the pricing for the Nimble SAN controller upgrade/All Flash Array were current at the time.
 
-What's below really isn't an apples to apples comparison. The SAN-based solutions include other features such as 4Hr support, predictive analytics, proactive monitoring, easy to use storage management tools, capacity planning and much more which do help to justify the additional expense. An in-house solution will mean in-house support and even with my current knowledge of ZFS, i'm not 100% confident that i could fix it in an emergency 100% of the time within a reasonable time frame.
+What's below really isn't an apples to apples comparison. The SAN-based solutions include other features such as 4Hr support, predictive analytics, proactive monitoring, easy to use storage management tools, capacity planning and much more which do help to justify the additional expense. An in-house solution will mean in-house support.
 
 With ZFS we still need to be concerned about its RAID configuration but from what i've read so far, it's not as complicated as it is for most servers/SANs (Nimble excluded) but still it's one more thing to learn and understand. While most Systems Administrators would be able to come up with a sensible configuration by themselves, i'm not sure all of them would be able to.Of course, you can ask yourself the question "How often does one need to do that?" and it's safe to say not often. It's still something worth keeping in mind though.
 
-Ultimately, ZFS would be very useful for us IF used correctly but the risks make it difficult to justify its use for production systems/storage in my opinion. These risks should be mitigated as OpenZFS matures but it's not quite there yet.
+Ultimately, ZFS would be very useful IF used correctly but the risks make it difficult to justify its use for production systems/storage in my opinion. These risks should be mitigated as OpenZFS matures.
 
 ### Hardware Recommendations
 
@@ -420,7 +420,7 @@ Finally, and this is an absolute MUST HAVE in my opinion. You need a SAS control
 
 ### Price Comparisons
 
-elow is a price comparison of some of the options we have on the table at the time of writing. All prices are in AUD and are inclusive of GST.
+Below is a price comparison of some of the options we have on the table at the time of writing. All prices are in AUD and are inclusive of GST.
 
 | Option | Price ($AUD Inc GST) |
 |---|---|
