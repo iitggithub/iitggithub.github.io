@@ -10,6 +10,9 @@ The random IT blog is a random IT blog written by a random IT guy that's mostly 
 
 ## How To Articles
 
+Published: Monday, 25 December 2023:
+
+* [How to get your public IP from behind a proxy](articles/ineedmyip.md)
 
 Published: Thursday, 21 December 2023:
 
