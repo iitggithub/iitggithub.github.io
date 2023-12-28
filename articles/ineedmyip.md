@@ -115,10 +115,32 @@ $
 
 ### Setup iptables/ufw etc
 
-Haven't placed rules here because it's different depending on what you're using. Refer to OS documentation for information on how to add this.
+#### UFW
 
-The basic idea behind this is to make sure connections on ports 22 and 80 are instead sent to the docker container that's running on TCP port 22222.
+1. Allow connections from anywhere to the usual SSH port, port 80 (http), and 22222 (our docker container)
 
-#### Forward TCP port 80 and 22 to 22222 via NAT PREROUTING
+```
+$ sudo ufw allow 22/tcp
+$ sudo ufw allow 80/tcp
+$ sudo ufw allow 22222/tcp
+```
 
-#### Allow connections on TCP port 80, 22, and 22222
+2. Create the NAT forwarding rules
+
+Add the following to the /etc/ufw/before.rules file. This should be added before the "*filter" rules definition. It just NAT's TCP port 22 and 80 to port 22222 where our docker container is listening.
+
+```
+*nat
+:PREROUTING ACCEPT [0:0]
+-A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 22222
+-A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 22222
+COMMIT
+```
+
+3. Restart the firewall or start it if it's not running
+
+```
+$ sudo ufw restart
+Firewall reloaded
+$
+```
