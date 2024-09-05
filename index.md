@@ -10,6 +10,10 @@ The random IT blog is a random IT blog written by a random IT guy that's mostly 
 
 ## How To Articles
 
+Published: Thursday, 5 September 2024:
+
+* [EC2 Image Builder - Adding Output AMI Tags to Shared AMIs](articles/2024-09-EC2-Image-Builder-Output-AMI-Tags)
+
 Published: Monday, 25 December 2023:
 
 * [How to get your public IP from behind a proxy](articles/ineedmyip.md)
