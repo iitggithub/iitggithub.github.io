@@ -13,15 +13,15 @@ The aim was to evaluate ZFS in a simulated test environment comparing it against
 
 The customer was asked to list the teams that utilise the existing storage solution. From those teams, a random team member was selected for participation in the analysis though their actual involvement was to be kept to a minimum.
 
-After interviewing each team member, it was clear that the storage was being utilised for 2 purposes:
+After interviewing each team member, it was clear that the storage was being utilised for 3 purposes:
 
-1. User home directory sharing
-2. Interacting with source code checkouts for various software products, releases and branches
-3. Enabling machines to automatically compile and test source code
+1. Storing User home directories and sharing them via SMB and NFS
+2. Interacting with source code checkouts in user home directories for various software products, releases and branches
+3. Enabling Continuous Integration(CI) and Continous Delivery (CD) infrastructure to automatically compile and test source code
 
-The primary methods for interacting with the storage is NFS (Via AutoFS) and Samba (Mainly for Windows machines).
+It was noted that users had a tendency to store their own source code checkouts in their own home directory. With almost 100 software engineers and QA engineers, there was a significant amount of data duplication present in their existing storage solution.
 
-Since one of the main uses for the storage system was software compilation, the customer was asked to develop a compilation test which we could use to test the performance of each storage system. This "compilation test" would be used as an additional data point when evualating the effectiveness of each solution.
+Since one of the main uses for the storage system was software compilation, the customer was asked to develop a compilation test which we could use to test the performance of each storage system. This "compilation test" would be used as an additional data point when evaluating the effectiveness of each solution.
 
 ### Testing Process
 
@@ -31,11 +31,11 @@ A total of 3 tests will be performed. All of which are outlined below;
 2. Disk Space Consolidation
 3. IO Tests
 
-#### Compilation Speed
+#### 1. Compilation Speed
 
-The compilation test is executed three times with the resulting run times recorded and then averaged. Flock is used to make sure that compilation times are not influenced by cache.
+The compilation test is executed three times with the resulting run times recorded and then averaged. Team members also requested that compilation tests were performed using flock.
 
-This test requires the use of a "helper" server. The helper server should be unused and ideally connected to the same network switch as the test server. By using a helper server, we ensure that the CPU/Memory used for compilation isn't impacting the CPU/Memory being used by ZFS.
+The compilation speed test requires the use of a "helper" server. The helper server should be unused and ideally connected to the same network switch as the test server. By using a helper server, we ensure that the CPU/Memory used for compilation isn't impacting the CPU/Memory being used by the ZFS server.
 
 The helper server isn't necessarily required when comparing compiliation speeds using local SAS storage or SAN storage, but for comparison purposes, these tests will also use the helper server.
 
@@ -60,9 +60,9 @@ The hardware being used for this test is a Dell PowerEdge R720 server with the f
 
 #### ZFS Benchmark Setup
 
-ZFS is optimised to run with storage attached in JBOD mode. However, since a JBOD card was not available, (The PERC H710p doesn't support JBOD mode) the data storage area that will be used for testing is configured in raid 10.
+ZFS is optimised to run with storage attached in JBOD mode. However, since a JBOD card was not available, (PERC cards do not support JBOD mode) the data storage area that will be used for testing is configured in raid 10.
 
-In future, a PowerVault MD12xx direct attached storage enclosure which includes a PERC H810 RAID Adapter card that supports JBOD mode would need to be used. The more information ZFS has about the disks it's using the better it's able to manage and assess the health of the disks. You can read al about it at [http://open-zfs.org/wiki/Hardware#Hardware_RAID_controllers](http://open-zfs.org/wiki/Hardware#Hardware_RAID_controllers).
+In future, a PowerVault MD12xx direct attached storage enclosure which includes a PERC H810 RAID Adapter card that supports JBOD mode would need to be used. The more information ZFS has about the disks it's using the better it's able to manage and assess the health of the disks. You can read all about it at [http://open-zfs.org/wiki/Hardware#Hardware_RAID_controllers](http://open-zfs.org/wiki/Hardware#Hardware_RAID_controllers).
 
 ZFS testing will be repeated with the ZFS primarycache set to "all", "metadata" and "none". These are the commands you'll need to know in order to change the primarycache setting for the entire pool.
 
