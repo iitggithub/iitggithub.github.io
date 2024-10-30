@@ -199,7 +199,9 @@ sysctl -w net.ipv4.tcp_sack=1
 sysctl -w net.ipv4.route.flush=1
 ```
 
-##### You can (and definitely should) store these values in a file so they're loaded each time the system boots like so:
+#### Storing the values so they're applied at boot
+
+The following command will create a file in /etc/sysctl.d called tcp_optimisations.conf which contains the commands listed above. Sysctl will load the file automatically when the system boots up.
 
 ```
 $ cat | tee /etc/sysctl.d/tcp_optimisations.conf <<EOF
