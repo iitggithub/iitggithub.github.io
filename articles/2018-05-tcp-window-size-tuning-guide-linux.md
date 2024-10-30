@@ -156,32 +156,46 @@ Here, 20480 is the minimum because we're using a high latecy, low throughput 20M
 Note that this also includes write optimisation (wmem) values as well because i find myself referencing this documentation a lot.
 
 ```
-# Turn on automatic TCP window size scaling
+# Enable automatic scaling of the TCP window size based on network conditions
 sysctl -w net.ipv4.tcp_window_scaling=1
-# Disable TCP slow start
+
+# Disable slow start after idle to maintain full throughput even after periods of inactivity
 sysctl -w net.ipv4.tcp_slow_start_after_idle=0
-# Set the min, default and maximum receive window sizes used during auto tuning
+
+# Configure the minimum, default, and maximum receive buffer sizes for auto-tuning:
+# - Minimum: 20 KB, to prevent low memory usage from limiting throughput.
+# - Default: ~1 MB, optimized for general use.
+# - Maximum: 16 MB, for high-speed connections like 1 Gb/s or higher.
 sysctl -w net.ipv4.tcp_rmem='20480 1040384 16777216'
 sysctl -w net.ipv4.tcp_wmem='20480 1040384 16777216'
-# Set default receive window size here as well. This one is used when window size scaling is disabled
+
+# Set the default receive and send buffer sizes for connections where window scaling is disabled
 sysctl -w net.core.rmem_default=1040384
 sysctl -w net.core.wmem_default=1040384
-# Set max receive window size here as well. This one is used when window size scaling is disabled
+
+# Set the maximum allowed receive and send buffer sizes per socket
+# Useful when window scaling is disabled and for large connections
 sysctl -w net.core.rmem_max=16777216
 sysctl -w net.core.wmem_max=16777216
-# Set the maximum buffer size allowed per socket
-# I recommend just setting this to your maximum window size
+
+# Set the maximum optional buffer memory per socket to match maximum window size
+# Helps avoid bottlenecks in buffer-limited situations
 sysctl -w net.core.optmem_max=16777216
-# Sets the maximum number of packets that will be buffered if the kernel can’t keep up
-# There’s no real method, I just set it to something that’s a lot higher than default
+
+# Define the maximum number of packets to queue if the kernel can’t process packets fast enough
+# This value is increased to improve handling of sudden traffic spikes
 sysctl -w net.core.netdev_max_backlog=65536
-# Set the congestion control algorithm. Not sure which one is better but cubic seems like it’s better than reno
-sysctl -w net.ipv4.tcp_available_congestion_control=’cubic’
-# Enable timestamps as defined in RFC1323
+
+# Specify the TCP congestion control algorithm; "cubic" is generally preferred for modern networks
+sysctl -w net.ipv4.tcp_congestion_control='cubic'
+
+# Enable RFC1323 TCP timestamps to improve round-trip time calculation accuracy
 sysctl -w net.ipv4.tcp_timestamps=1
-# Enable select acknowledgments
+
+# Enable Selective Acknowledgements (SACK) to optimise performance over lossy networks
 sysctl -w net.ipv4.tcp_sack=1
-# Force all new TCP connections to use the above settings
+
+# Apply the updated TCP settings to all new connections
 sysctl -w net.ipv4.route.flush=1
 ```
 
@@ -189,39 +203,47 @@ sysctl -w net.ipv4.route.flush=1
 
 ```
 $ cat | tee /etc/sysctl.d/tcp_optimisations.conf <<EOF
-# Turn on automatic TCP window size scaling
-net.ipv4.tcp_window_scaling = 1
-# Disable TCP slow start
-net.ipv4.tcp_slow_start_after_idle = 0
-# Set the min, default and maximum receive window sizes used during auto
-tuning
-net.ipv4.tcp_rmem = 20480 1040384 16777216
-net.ipv4.tcp_wmem = 20480 1040384 16777216
-# Set default receive window size here as well. This one is used when
-window size scaling is disabled
-net.core.rmem_default = 1040384
-net.core.wmem_default = 1040384
-# Set max receive window size here as well. This one is used when window
-size scaling is disabled
-net.core.rmem_max = 16777216
-net.core.wmem_max = 16777216
-# Set the maximum buffer size allowed per socket
-# I recommend just setting this to your maximum window size
-net.core.optmem_max = 16777216
-# Sets the maximum number of packets that will be buffered if the kernel
-can’t keep up
-# There’s no real method, I just set it to something that’s a lot higher
-than default
-net.core.netdev_max_backlog = 65536
-# Set the congestion control algorithm. Not sure which one is better but
-cubic seems like it’s better than reno
-net.ipv4.tcp_available_congestion_control = cubic
-# Enable timestamps as defined in RFC1323
-net.ipv4.tcp_timestamps = 1
-# Enable select acknowledgments
-net.ipv4.tcp_sack = 1
-# Force all new TCP connections to use the above settings
-net.ipv4.route.flush = 1
+# Enable automatic scaling of the TCP window size based on network conditions
+sysctl -w net.ipv4.tcp_window_scaling=1
+
+# Disable slow start after idle to maintain full throughput even after periods of inactivity
+sysctl -w net.ipv4.tcp_slow_start_after_idle=0
+
+# Configure the minimum, default, and maximum receive buffer sizes for auto-tuning:
+# - Minimum: 20 KB, to prevent low memory usage from limiting throughput.
+# - Default: ~1 MB, optimized for general use.
+# - Maximum: 16 MB, for high-speed connections like 1 Gb/s or higher.
+sysctl -w net.ipv4.tcp_rmem='20480 1040384 16777216'
+sysctl -w net.ipv4.tcp_wmem='20480 1040384 16777216'
+
+# Set the default receive and send buffer sizes for connections where window scaling is disabled
+sysctl -w net.core.rmem_default=1040384
+sysctl -w net.core.wmem_default=1040384
+
+# Set the maximum allowed receive and send buffer sizes per socket
+# Useful when window scaling is disabled and for large connections
+sysctl -w net.core.rmem_max=16777216
+sysctl -w net.core.wmem_max=16777216
+
+# Set the maximum optional buffer memory per socket to match maximum window size
+# Helps avoid bottlenecks in buffer-limited situations
+sysctl -w net.core.optmem_max=16777216
+
+# Define the maximum number of packets to queue if the kernel can’t process packets fast enough
+# This value is increased to improve handling of sudden traffic spikes
+sysctl -w net.core.netdev_max_backlog=65536
+
+# Specify the TCP congestion control algorithm; "cubic" is generally preferred for modern networks
+sysctl -w net.ipv4.tcp_congestion_control='cubic'
+
+# Enable RFC1323 TCP timestamps to improve round-trip time calculation accuracy
+sysctl -w net.ipv4.tcp_timestamps=1
+
+# Enable Selective Acknowledgements (SACK) to optimise performance over lossy networks
+sysctl -w net.ipv4.tcp_sack=1
+
+# Apply the updated TCP settings to all new connections
+sysctl -w net.ipv4.route.flush=1
 EOF
 ```
 
