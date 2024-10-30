@@ -16,7 +16,9 @@ For the purpose of this article, let's set some numbers of our own
 
 Note: To make full use of receive or even transmit window size tuning, BOTH hosts should be tuned.
 
-##### First of all, we need to find the current settings for the following parameters:
+#### Obtain current sysctl Parameter Values
+
+First of all, we need to find the current settings for the following parameters. You can simply run the sysctl commands below to obtain their current values.
 
 ```
 sysctl net.ipv4.tcp_window_scaling        # Enables/disables TCP window scaling (1 = enabled)
@@ -34,7 +36,7 @@ sysctl net.ipv4.tcp_timestamps            # Enables/disables TCP timestamps
 sysctl net.ipv4.tcp_sack                  # Enables/disables TCP Selective Acknowledgements (SACK)
 ```
 
-##### As an example, this is the output when running those commands on our test system: 
+As an example, this is the output when running those commands on our test system: 
 
 ```
 net.ipv4.tcp_window_scaling = 1
@@ -52,11 +54,9 @@ net.ipv4.tcp_timestamps = 1
 net.ipv4.tcp_sack = 1
 ```
 
-We’re only going to do receive window tuning so ignore the wmem parameters (it’s the same process anyway but requires bi-directional access in order to test).
+This article will primarily focus on calculating the Receive Window side but if you have access to both the remote and local servers, you can use the same process for calculating the wmem figures as well because it's the same process, but you obviously need access to both servers and bi-directional connectivity for testing.
 
-#### Calculating The Optimal Window Size
-
-First we need to find our BDP or Bandwidth Delay Product.
+#### Calculating Bandwidth-Delay Product (BDP)
 
 The Bandwidth-Delay Product (BDP) is a critical metric when tuning TCP window sizes. It represents the amount of unacknowledged data that can be in transit to achieve optimal throughput. Calculating BDP helps determine the required buffer size:
 
@@ -80,21 +80,21 @@ BDP = Bandwidth (bits/sec) x RTT (sec)
 65535 / 1300 = 50.41
 ```
 
-2. Round down to the nearest even integer to get an even number of segments, resulting in 50.
+2\. Round down to the nearest even integer to get an even number of segments, resulting in 50.
 
-3. Multiply by MSS: To find the unscaled window size:
+3\. Multiply by MSS: To find the unscaled window size:
 
 ```
 50 * 1300 = 65000 bytes
 ```
 
-4. Scale unscaled window size to meet the Bandwidth-Delay Product (BDP)
+4\. Scale unscaled window size to meet the Bandwidth-Delay Product (BDP)
 
 Multiply 65000 by 2 until the window size exceeds the BDP, calculated previously as 850,000 bytes.
 
 After several multiplications, we get 1,040,000, which is close to our target BDP.
 
-5. Aligning the Window Size with System Constraints
+5\. Aligning the Window Size with System Constraints
 
 Since 1,040,000 isn’t a directly valid system parameter, divide it by 1024 (to work in 1K blocks) and round up:
 
@@ -102,7 +102,7 @@ Since 1,040,000 isn’t a directly valid system parameter, divide it by 1024 (to
 1,040,000 / 1024 = 1016
 ```
 
-6. Final Optimal Window Size: Multiply 1016 by 1024 to confirm:
+6\. Final Optimal Window Size: Multiply 1016 by 1024 to confirm:
 
 ```
 1016 * 1024 = 1,040,384 bytes
@@ -110,7 +110,7 @@ Since 1,040,000 isn’t a directly valid system parameter, divide it by 1024 (to
 
 This final value of 1,040,384 bytes is the default window size we’ll use.
 
-7. Setting Minimum and Maximum Window Sizes
+7\. Setting Minimum and Maximum Window Sizes
 
 #### Determining the Maximum TCP Window Size
 
