@@ -204,7 +204,7 @@ sysctl -w net.ipv4.route.flush=1
 The following command will create a file in /etc/sysctl.d called tcp_optimisations.conf which contains the commands listed above. Sysctl will load the file automatically when the system boots up.
 
 ```
-$ cat | tee /etc/sysctl.d/tcp_optimisations.conf <<EOF
+$ cat | sudo tee /etc/sysctl.d/tcp_optimisations.conf <<EOF
 # Enable automatic scaling of the TCP window size based on network conditions
 sysctl -w net.ipv4.tcp_window_scaling=1
 
