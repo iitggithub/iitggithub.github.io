@@ -1,112 +1,142 @@
 ## Deploy an iPerf Speed Testing Server with Web Interface
 
-Sometimes you just need to run network performance tests between two hosts. While there are tools available for running speed tests such as iPerf, they're often annoying to setup, confusing to use, and require console access to the server itself in order to test.
+Sometimes you just need to run network tests between two hosts. While there are tools available such as ping, traceroute, iperf3 etc, they're often annoying to install, confusing to use and require access to servers themselves. There's got to be a better way!
 
-Here's where the IITG Web-based iPerf containers come into play. With this guide, you can setup iPerf servers in multiple locations and allow network support staff to perform network testing without the need to give them console access to the server itself.
+Inspired by the website [https://digwebinterface.com/](https://digwebinterface.com/), I decided to create the IITG Iperf-Web docker container. An Alpine-based Python 3 Flask web server which allows you to execute iperf, iperf3, dig, nslookup, netcat, ping, and traceroute commands and view their output rom a web interface so no server access is required.
 
-Let's get started!
+It's deployed as a docker container for easy setup but if you know what you're doing, all of the files are available in the iperf-web github repository.
+
+#### Why is it called iperf-web?
+
+Originally it was only supposed to be a web interface for iperf-web before requests were made to expand it to encompass other tools. The name was kept the same, but now there's more features!
+
+#### Pre-requisites
+
+To follow along with this tutorial, you will need to [https://docs.docker.com/engine/install/](install the Docker engine) and have docker running.
+
+You will also need the appropriate sudo permissions or access to the root user account.
 
 #### Installation
 
-Install web interface, iperf-servers and iperf command:
+Pull down the iperf-web docker container from the Docker Hub and run it!
 
 ```
-$ curl -L https://raw.githubusercontent.com/iitggithub/iperf-web/master/install.sh | bash
+sudo docker run -d --restart=always -name iperf-web -p 5000:5000 iitgdocker/iperf-web
 ```
 
-#### Configure iperf-web
+The command will run a docker container using the docker image iitgdocker/iperf-web. It exposes the containers TCP port 5000 which the flask app runs on to TCP port 5000 on the docker host (-p 5000:5000), runs the container non-interactively in daemon mode (-d) and will automatically try to restart the container if anything happens to it (--restart=always).
 
-If the URL you will be using to access the iperf web interface does not match the fully qualfied domain name of your docker container host, make sure you set FQDN_SERVER_NAME to something more meaningful.
+That's it! It's ready to use. Simply visit the site in your browser on the correct TCP ie http://192.168.1.10:5000 and you'll be greeted with a web interface similar to what's shown below:
 
-##### Set a variable to contain the hostname
+![Overview](https://github.com/iitggithub/iperf-web/blob/master/overview.png?raw=true)
 
-```
-$ export FQDN_SERVER_NAME="`hostname`"
-```
+#### How To Save Server Connection Details
 
-By default iperf-web exposes port 80. That's not necessary since we'll use a self signed certificate and HTTPS later on. You can manually edit the /data/iperf-web/docker-compose.yml file to disable exposing port 80 to the outside world or just recreate from scratch using the code below
+If you have a list of servers that you regularly perform testing against or you plan to deploy multiple iperf-web servers and perform testing between them, you can save the connection details in a list. You can then select a configuration and it will prefill the fields for that test type.
 
-##### Reconfigure iperf-web docker-compose.yml file
+![Server Configuration Details](https://github.com/iitggithub/iperf-web/blob/master/NTU_Server_Details.png?raw=true)
 
-```
-$ cat | sudo tee /data/iperf-web/docker-compose.yml <<EOF
-server:
-image: iitgdocker/iperf-web:latest
-volumes:
-- /var/run/docker.sock:/var/run/docker.sock
-- /data/iperf-web/images:/var/www/html/images
-environment:
-- VIRTUAL_HOST=${FQDN_SERVER_NAME}
-EOF
-```
+1\. Mount the config directory
 
-#### Configure An Nginx Web Server
+You need to mount a directory from your docker host into the iperf-web docker container. This allows you to edit the config.json file from the docker host and ensure that the contents of the file persists between container restarts.
 
-Assuming you don't already run your own webserver on the host, we'll use a docker container for that too. This one will automatically regenerate and reload nginx whenever a compatible container is detected. This is based on jwilders nginx proxy. You can find more detailed information on how to use it here: [https://github.com/jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy).
-
-##### Create a self-signed SSL certificate (Optional)
+In the example below, we mount the /opt/iperf-web/config directory on the docker host to the /app/config directory in the docker container.
 
 ```
-$ mkdir -p /data/nginx/certs 
-$ openssl req -new -newkey rsa:2048 -nodes -out /data/nginx/certs/${FQDN_SERVER_NAME}.crt -keyout /data/nginx/certs/${FQDN_SERVER_NAME}.key -subj "/C=/ST=/L=/O=IITG Blog/CN=${FQDN_SERVER_NAME}"
+sudo mkdir -p /opt/iperf-web/config
+sudo docker run -d --restart=always -name iperf-web -p 5000:5000 -v /opt/iperf-web/config:/app/config iitgdocker/iperf-web
 ```
 
-##### Install Your Own Company Logo (Optional)
+2\. Configure the config.json file according to your requirements
+
+Note: An example has been provided in the config directory called config_example.json. You don't have to include every field name, just the fields you wish to change.
+
+You will need to know the name of the test ie dig, iperf, mtr, nc, nslookup, ping, traceroute etc and the name of each of the fields you wish to prefill.
+
+Because the test types and field names may change at any time, I recommend reviewing the [https://github.com/iitggithub/iperf-web/blob/master/templates/index.html](https://github.com/iitggithub/iperf-web/blob/master/templates/index.html) file directly.
 
 ```
-$ mkdir -p /data/nginx/images
-$ cp <path_to_my_logo>.png /data/nginx/images
+{
+    "dig": [
+        {
+            "name": "ineedmyip.com",
+            "dig_target": "ineedmyip.com",
+            "dig_parameters": "+short"
+        },
+        {
+            "name": "ineedmyip.com reverse DNS",
+            "dig_target": "140.82.49.8",
+            "dig_parameters": "-x"
+        }
+    ],
+    "iperf": [
+        {
+            "name": "Server 1",
+            "iperf_version": "3",
+            "iperf_target": "192.168.1.111",
+            "iperf_port": "5201",
+            "iperf_conn_type": "TCP",
+            "iperf_timeout": "10",
+            "iperf_parameters": "--format m"
+        },
+        {
+            "name": "Server 2",
+            "iperf_version": "2",
+            "iperf_target": "192.168.1.222",
+            "iperf_port": "5201",
+            "iperf_conn_type": "UDP",
+            "iperf_timeout": "15",
+            "iperf_parameters": "--bandwidth 10M"
+        }
+    ],
+    "nc": [
+        {
+            "name": "ineedmyip.com SSH port 22",
+            "nc_target": "ineedmyip.com",
+            "nc_port": "22"
+        }
+    ],
+    "ping": [
+        {
+            "name": "8.8.8.8",
+            "ping_target": "8.8.8.8",
+            "ping_count": "4"
+        }
+    ]
+}
 ```
 
-##### Install the nginx docker compose file
+3\. Restart the container if it's already running
+
+Note: This is required to make sure the container uses the updated image
 
 ```
-$ cat | tee /data/nginx/docker-compose.yml <<EOF
-proxy:
-image: jwilder/nginx-proxy:latest
-ports:
-- "80:80"
-- "443:443"
-volumes:
-- /var/run/docker.sock:/tmp/docker.sock
-- /data/nginx/certs:/etc/nginx/certs
-EOF
+sudo docker pull iitgdocker/iperf-web:latest
+sudo docker stop iperf-web
+sudo docker rm iperf-web
+sudo docker run -d --restart=always -name iperf-web -p 5000:5000 -v /opt/iperf-web/config:/app/config iitgdocker/iperf-web
 ```
 
-##### Install the systemd service file
+Using the configuration above, a dropdown box will appear when the Dig, Iperf or Ping test types are selected and allow you to select the appropriate configure based on the configuration name. Selecting a configration will automatically prefill those fields.
 
-If you can make use of a systemd service file, here's the one you'll need for the nginx proxy
+#### Environment Variables
 
-```
-$ cat | sudo tee /usr/lib/systemd/system/docker-nginx.service <<EOF
-[Unit]
-Description=Nginx web proxy
-After=docker.service
-[Service]
-Conflicts=shutdown.target
-StartLimitInterval=0
-Restart=always
-TimeoutStartSec=0
-Restart=on-failure
-WorkingDirectory=/data/nginx
-ExecStartPre=-/usr/local/bin/docker-compose stop
-ExecStartPre=-/usr/local/bin/docker-compose pull
-ExecStart=/usr/local/bin/docker-compose up
-ExecStop=-/usr/local/bin/docker-compose stop
-[Install]
-WantedBy=multi-user.target
-EOF
-```
+##### IPERF\_WEB\_PORT
 
-##### Start the nginx proxy
+Sets the TCP port the python flask app listens on.
 
-```
-$ sudo systemctl start docker-nginx
-$ sudo systemctl enable docker-nginx
-```
+Possible values: number between 1025 and 65535
 
-##### Restart the iperf-web server
+Default: 5000
 
-```
-$ sudo systemctl restart docker-iperf-web
-```
+##### IPERF\_WEB\_DEBUG\_MODE
+
+Enables Flask app debug mode
+
+Possible values: True, False
+
+Default: False
+
+#### Further Reading, comments, issues etc
+
+More detailed documentation is available on the [iperf-web github repo](https://github.com/iitggithub/iperf-web).
